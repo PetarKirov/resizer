@@ -17,8 +17,8 @@ jobs:
           command: mkdir build && cd build && cmake ..
       - run:
           name: Build the project
-          command: cmake --build .
+          command: cmake --build ./build
       - run:
           name: Run the executable
-          command: ./test_cmake
+          command: ./build/test_cmake
 
