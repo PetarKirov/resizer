@@ -2,7 +2,10 @@ cmake_minimum_required (VERSION 3.2)
 
 project(image-resizer
     VERSION 0.0.1
-    DESCRIPTION "A library for resizing bmp images"
+)
+
+set(PROJECT_DESCRIPTION
+    "A C++ library and a node module for resizing .bmp image files"
 )
 
 configure_file(
