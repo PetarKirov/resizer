@@ -5,20 +5,22 @@ jobs:
       - image: gcc:7
     steps:
       - checkout
-      - run: apt-get update && apt-get install -y --no-install-recommends cmake
       - run:
-          name: Check system
+          name: Install cmake and check versions
           command: |
+            apt-get update && apt-get install -y --no-install-recommends cmake
             uname -a
             g++ --version
             cmake --version
+            make --version
       - run:
-          name: Generate build files with CMake
-          command: mkdir build && cd build && cmake ..
+          name: Build in C++98 mode
+          command: |
+            ./scripts/build_from_scratch.sh '-DUSE_CPP11=OFF'
+            ./build/test_cmake
       - run:
-          name: Build the project
-          command: cmake --build ./build
-      - run:
-          name: Run the executable
-          command: ./build/test_cmake
+          name: Build in C++11 mode
+          command: |
+            ./scripts/build_from_scratch.sh '-DUSE_CPP11=ON'
+            ./build/test_cmake
 
