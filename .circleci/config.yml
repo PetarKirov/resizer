@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: gcc:7
+    steps:
+      - checkout
+      - run: apt-get update && apt-get install -y --no-install-recommends cmake
+      - run:
+          name: Check system
+          command: |
+            uname -a
+            g++ --version
+            cmake --version
+      - run:
+          name: Generate build files with CMake
+          command: mkdir build && cd build && cmake ..
+      - run:
+          name: Build the project
+          command: cmake --build .
+      - run:
+          name: Run the executable
+          command: ./test_cmake
+
