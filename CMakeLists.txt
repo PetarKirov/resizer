@@ -1,20 +1,18 @@
 cmake_minimum_required (VERSION 3.2)
 
-project(image-resizer
-    VERSION 0.0.1
-)
+project(image-resizer)
 
-set(PROJECT_DESCRIPTION
+set(CMAKE_PROJECT_DESCRIPTION
     "A C++ library and a node module for resizing .bmp image files"
 )
 
-configure_file(
-    "${PROJECT_SOURCE_DIR}/include/config/config.h.in"
-    "${PROJECT_SOURCE_DIR}/include/config/config.h"
-)
+if (MSVC)
+    add_compile_options(/W4)
+else (MSVC)
+    add_compile_options(-Wall -Wextra -Wpedantic)
+endif (MSVC)
 
-option(USE_CPP11
-    "Use C++ 11, insteadof C++03" ON)
+option(USE_CPP11 "Use C++ 11, instead of C++98" ON)
 
 if (USE_CPP11)
     set(CMAKE_CXX_STANDARD 11)
@@ -22,5 +20,6 @@ else (USE_CPP11)
     set(CMAKE_CXX_STANDARD 98)
 endif (USE_CPP11)
 
-include_directories(include)
-add_executable(test_cmake src/test_cmake.cpp)
+add_subdirectory(test_util)
+add_subdirectory(image)
+add_subdirectory(tests/test1)

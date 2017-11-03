@@ -1,5 +1,6 @@
 #include <iostream>
 #include "config/config.h"
+#include "test_util/assert.h"
 
 void printCppVer()
 {
@@ -15,7 +16,9 @@ int main()
 {
     using namespace std;
     printCppVer();
-    cout << "Library name: " << LIB_NAME << endl;
-    cout << "Library version: " << LIB_VERSION << endl;
-    cout << "Library description: " << LIB_DESCRIPTION << endl;
+    string expected_version = "0.0.1";
+    string actual_version = LIB_VERSION;
+
+    ASSERT_EQ(actual_version, expected_version);
+    ASSERT_NEQ(actual_version, string("0.0.0"));
 }
