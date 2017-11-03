@@ -1,11 +1,57 @@
 #ifndef IMAGE_CONFIG_CONFIG_H
 #define IMAGE_CONFIG_CONFIG_H
 
+#include <stdint.h>
+
 #define LIB_NAME "@PROJECT_NAME@"
 #define LIB_VERSION "@PROJECT_VERSION@"
 #define LIB_DESCRIPTION "@PROJECT_DESCRIPTION@"
 
 #define ASSERT_EXIT 1
 #define ASSERT_THROW 0
+
+// C++11 compatibility:
+
+#if ((__GNUG__ && (__cplusplus < 201103L)) || (defined(_MSC_VER) && (_MSC_VER < 1700)))
+#   define ENUM_CLASS_BEGIN(Name, Type)                     \
+        struct Name                                         \
+        {                                                   \
+            Name() {}                                       \
+            explicit Name(Type v) : _v(v) {}                \
+        private:                                            \
+            Type _v;                                        \
+            typedef Name self_type;                         \
+        public:                                             \
+            enum enum_type                                  \
+            {
+
+#   define ENUM_CLASS_END \
+            };                                              \
+        };
+#else
+#   define ENUM_CLASS_BEGIN(Name, Type) enum class Name : Type {
+#   define ENUM_CLASS_END };
+#endif
+
+#if ((__GNUG__ && (__cplusplus < 201103L)) || (defined(_MSC_VER) && (_MSC_VER < 1600)))
+#   define STATIC_ASSERT_MSG(cond, msg) STATIC_ASSERT(cond)
+
+    namespace image { namespace config {
+        template <bool> struct STATIC_ASSERTION_FAILURE;
+        template <> struct STATIC_ASSERTION_FAILURE<true>{};
+        template<int> struct static_assert_test{};
+    }}
+
+#   define CONCAT(X, Y) DO_CONCAT(X, Y)
+#   define DO_CONCAT(X, Y) DO_CONCAT2( X, Y)
+#   define DO_CONCAT2(X, Y) X##Y
+
+#   define STATIC_ASSERT(cond) \
+    enum { CONCAT(boost_static_assert_enum_, __COUNTER__) \
+        = sizeof(::image::config::STATIC_ASSERTION_FAILURE< ( cond ) >) }
+#else
+#   define STATIC_ASSERT_MSG(cond, msg) static_assert(cond, msg)
+#   define STATIC_ASSERT(cond) static_assert(cond, "")
+#endif
 
 #endif /* IMAGE_CONFIG_CONFIG_H */
