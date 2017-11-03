@@ -1,15 +1,24 @@
 #!/bin/bash
 
-indent() { sed 's/^/  /'; }
+indent() { sed 's/^/>  /'; }
 
-for i in ./build/tests/*/test*; do
-    printf "Executing test: '$i'\n\n"
+TESTS="./build/tests/*/test*"
+TEST_COUNT=`ls -1q $TESTS | wc -l`
+
+echo "---"
+echo "Test runner started. $TEST_COUNT tests detected."
+
+for i in $TESTS; do
+    echo "* Executing test: '$i'..."
     $i | indent
     if [ ${PIPESTATUS[0]} -ne 0 ]
     then
-        printf "\nError: '$i' failed.\n\n"
+        printf "Error: '$i' failed.\n\n"
         exit 42
     else
-        printf "\n'$i' executed successfully.\n\n"
+        printf "'$i' executed successfully.\n\n"
     fi
 done
+
+echo "All tests ($TEST_COUNT) executed successfully."
+echo "---"
