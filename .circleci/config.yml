@@ -14,13 +14,13 @@ jobs:
             cmake --version
             make --version
       - run:
-          name: Build in C++98 mode
+          name: Build and test in C++98 mode
           command: |
             ./scripts/build_from_scratch.sh '-DUSE_CPP11=OFF'
-            ./build/test_cmake
+            ./build/tests/*/test*
       - run:
-          name: Build in C++11 mode
+          name: Build and test in C++11 mode
           command: |
             ./scripts/build_from_scratch.sh '-DUSE_CPP11=ON'
-            ./build/test_cmake
+            ./build/tests/*/test*
 
