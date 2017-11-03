@@ -22,5 +22,4 @@ endif (USE_CPP11)
 
 add_subdirectory(test_util)
 add_subdirectory(image)
-add_subdirectory(tests/test1)
-add_subdirectory(tests/test_slice)
+add_subdirectory(tests)
