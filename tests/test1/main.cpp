@@ -1,5 +1,5 @@
 #include <iostream>
-#include "config/config.h"
+#include "image/config/config.h"
 #include "test_util/assert.h"
 
 void printCppVer()

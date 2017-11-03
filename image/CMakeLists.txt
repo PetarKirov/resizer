@@ -4,8 +4,8 @@ project(image
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/include/config/config.h.in"
-    "${PROJECT_SOURCE_DIR}/include/config/config.h"
+    "${PROJECT_SOURCE_DIR}/include/image/config/config.h.in"
+    "${PROJECT_SOURCE_DIR}/include/image/config/config.h"
 )
 
 add_library(${PROJECT_NAME} INTERFACE)
