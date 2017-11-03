@@ -17,10 +17,10 @@ jobs:
           name: Build and test in C++98 mode
           command: |
             ./scripts/build_from_scratch.sh '-DUSE_CPP11=OFF'
-            ./build/tests/*/test*
+            ./scripts/run_tests.sh
       - run:
           name: Build and test in C++11 mode
           command: |
             ./scripts/build_from_scratch.sh '-DUSE_CPP11=ON'
-            ./build/tests/*/test*
+            ./scripts/run_tests.sh
 
