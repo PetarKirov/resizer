@@ -14,6 +14,7 @@ do \
     { \
         using test_util::operator<<; \
         std::cout << __FILE__ << ":" << __LINE__ << ": Error:" \
+            << std::boolalpha \
             << " expected: `" << (expected) << "` (" STRINGIFY(expected) ")" \
             << " to equal actual: `" \
             << (actual) << "` (" STRINGIFY(actual) ")\n"; \
@@ -28,6 +29,7 @@ do \
     { \
         using test_util::operator<<; \
         std::cout << __FILE__ << ":" << __LINE__ << ": Error:" \
+            << std::boolalpha \
             << " expected: `" << (expected) << "` (" STRINGIFY(expected) ")" \
             << " to not equal actual: `" \
             << (actual) << "` (" STRINGIFY(actual) ")\n"; \
