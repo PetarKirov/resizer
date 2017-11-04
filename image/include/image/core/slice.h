@@ -24,10 +24,8 @@ namespace core
         Slice() { }
 #endif
 
-    private:
-        Slice(size_t size, T *ptr)
-            : _length(size), _ptr(ptr)
-        { }
+    public:
+        Slice(size_t size, T *ptr) : _length(size), _ptr(ptr) { }
 
     public:
         template <size_t N>
@@ -68,7 +66,19 @@ namespace core
             ASSERT(end < _length, "`end` must be less than `length()`");
             return Slice<T>(end - start, _ptr + start);
         }
-    };
+    }; /* struct Slice<T> */
+
+    template <class T, size_t N>
+    Slice<const T> slice(const T (&arr)[N])
+    {
+        return Slice<const T>(N, &arr[0]);
+    }
+
+    template <class T, size_t N>
+    Slice<T> slice(T (&arr)[N])
+    {
+        return Slice<T>(N, &arr[0]);
+    }
 } /* namespace core */
 } /* namespace image */
 
