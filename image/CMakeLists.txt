@@ -8,9 +8,11 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/include/image/config/config.h"
 )
 
-add_library(${PROJECT_NAME} INTERFACE)
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 add_library(image::lib ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
-    INTERFACE ${PROJECT_SOURCE_DIR}/include
+    PUBLIC ${PROJECT_SOURCE_DIR}/include
 )
