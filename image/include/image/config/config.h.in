@@ -20,17 +20,34 @@
             explicit Name(Type v) : _v(v) {}                \
         private:                                            \
             Type _v;                                        \
-            typedef Name self_type;                         \
         public:                                             \
-            enum enum_type                                  \
+            enum Enum                                  \
             {
 
-#   define ENUM_CLASS_END \
-            };                                              \
+#   define ENUM_CLASS_END(Name) \
+            };                                               \
+            friend bool operator ==(Name a, Name b) { return a._v == b._v; } \
+            friend bool operator ==(Name a, Enum b) { return a._v == b;    } \
+            friend bool operator ==(Enum a, Name b) { return a    == b._v; } \
+            friend bool operator !=(Name a, Name b) { return a._v != b._v; } \
+            friend bool operator !=(Name a, Enum b) { return a._v != b;    } \
+            friend bool operator !=(Enum a, Name b) { return a    != b._v; } \
+            friend bool operator  <(Name a, Name b) { return a._v  < b._v; } \
+            friend bool operator  <(Name a, Enum b) { return a. _v < b;    } \
+            friend bool operator  <(Enum a, Name b) { return a     < b._v; } \
+            friend bool operator <=(Name a, Name b) { return a._v <= b._v; } \
+            friend bool operator <=(Name a, Enum b) { return a._v <= b;    } \
+            friend bool operator <=(Enum a, Name b) { return a    <= b._v; } \
+            friend bool operator  >(Name a, Name b) { return a._v  > b._v; } \
+            friend bool operator  >(Name a, Enum b) { return a._v  > b;    } \
+            friend bool operator  >(Enum a, Name b) { return a     > b._v; } \
+            friend bool operator >=(Name a, Name b) { return a._v >= b._v; } \
+            friend bool operator >=(Name a, Enum b) { return a._v >= b;    } \
+            friend bool operator >=(Enum a, Name b) { return a    >= b._v; } \
         };
 #else
 #   define ENUM_CLASS_BEGIN(Name, Type) enum class Name : Type {
-#   define ENUM_CLASS_END };
+#   define ENUM_CLASS_END(Name) };
 #endif
 
 #if ((__GNUG__ && (__cplusplus < 201103L)) || (defined(_MSC_VER) && (_MSC_VER < 1600)))

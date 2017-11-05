@@ -6,11 +6,11 @@ ENUM_CLASS_BEGIN(Enum1, uint32_t)
     member2,
     member3 = 31,
     member4
-ENUM_CLASS_END
+ENUM_CLASS_END(Enum1)
 
 ENUM_CLASS_BEGIN(Enum2, uint8_t)
-    member1,
-ENUM_CLASS_END
+    member1
+ENUM_CLASS_END(Enum2)
 
 int main()
 {

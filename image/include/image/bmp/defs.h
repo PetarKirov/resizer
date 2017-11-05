@@ -30,7 +30,7 @@ ENUM_CLASS_BEGIN(DIBVersion, uint32_t)
     BITMAPV3INFOHEADER =    56,
     BITMAPV4INFOHEADER =    108,
     BITMAPV5INFOHEADER =    124
-ENUM_CLASS_END
+ENUM_CLASS_END(DIBVersion)
 
 ENUM_CLASS_BEGIN(Compression, uint32_t)
     BI_RGB =            0,
@@ -43,13 +43,13 @@ ENUM_CLASS_BEGIN(Compression, uint32_t)
     BI_CMYK =           11,
     BI_CMYKRLE8 =       12,
     BI_CMYKTLE4 =       13
-ENUM_CLASS_END
+ENUM_CLASS_END(Compression)
 
 ENUM_CLASS_BEGIN(LogicalColorSpace, uint32_t)
     calibratedRGB = 0x00000000,
     sRGB = 0x73524742,
     windowsColorSpace = 0x57696E20
-ENUM_CLASS_END
+ENUM_CLASS_END(LogicalColorSpace)
 
 // Header definitions for DIBs (device-independent bitmaps):
 
