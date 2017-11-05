@@ -33,6 +33,16 @@ namespace core
             : _length(N), _ptr(arr)
         { }
 
+        friend bool operator==(const Slice<T>& a, const Slice<T>& b)
+        {
+            return a._length == b._length && a._ptr == b._ptr;
+        }
+
+        friend bool operator!=(const Slice<T>& a, const Slice<T>& b)
+        {
+            return !(a == b);
+        }
+
         size_t length() const { return _length; }
 
         T* begin() { return _ptr; }
