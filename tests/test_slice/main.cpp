@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "image/core/slice.h"
+#include "image/core/algorithm.h"
 #include "test_util/assert.h"
 
 using namespace image::core;
@@ -35,4 +36,13 @@ int main()
 
     Sum s = std::for_each(sl1.begin(), sl1.end(), Sum());
     ASSERT_EQ(s.sum, 15);
+
+    int dstArr[5] = {};
+    Slice<int> dst = slice(dstArr);
+    copy<int>(sl1, dst);
+    ASSERT_EQ(dstArr[0], 1);
+    ASSERT_EQ(dstArr[1], 2);
+    ASSERT_EQ(dstArr[2], 3);
+    ASSERT_EQ(dstArr[3], 4);
+    ASSERT_EQ(dstArr[4], 5);
 }
