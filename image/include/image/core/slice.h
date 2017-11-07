@@ -111,6 +111,17 @@ namespace core
         Slice<T>       dropBack()       { return this->slice(0, _length - 1); }
         Slice<const T> dropBack() const { return this->slice(0, _length - 1); }
 
+        template <class U>
+        Slice<U> bitcast()
+        {
+            ASSERT(sizeof(U) > 0, "Only POD types can be casted, sizeof(U) == 0");
+            ASSERT(sizeof(T) > 0, "Only POD types can be casted, sizeof(T) == 0");
+            ASSERT(sizeof(T) % sizeof(U) == 0,
+                "Array cast misalignmnet - sizeof(T) must be "
+                "divisible by sizeof(U)");
+            return Slice<U>(_length * (sizeof(T) / sizeof(U)), (U*)_ptr);
+        }
+
     }; /* struct Slice<T> */
 
     template <class T, size_t N>
