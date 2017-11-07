@@ -6,6 +6,15 @@
 
 using namespace image::core;
 
+void testBasics();
+void testRangePrimitives();
+
+int main()
+{
+    testBasics();
+    testRangePrimitives();
+}
+
 struct Sum
 {
     Sum(): sum(0) { }
@@ -13,7 +22,7 @@ struct Sum
     int sum;
 };
 
-int main()
+void testBasics()
 {
     int arr[] = {1, 2, 3, 4, 5};
 
@@ -45,4 +54,24 @@ int main()
     ASSERT_EQ(dstArr[2], 3);
     ASSERT_EQ(dstArr[3], 4);
     ASSERT_EQ(dstArr[4], 5);
+}
+
+void testRangePrimitives()
+{
+    const int arr[] = {1, 2, 3, 4, 5};
+    Slice<const int> sl1 = slice(arr);
+
+    ASSERT_EQ(sl1.empty(), false);
+    ASSERT_EQ(sl1.front(), 1);
+    ASSERT_EQ(sl1.back(), 5);
+
+    Slice<const int> sl2 = sl1.drop();
+    ASSERT_EQ(sl2.front(), 2);
+    ASSERT_EQ(sl2.back(), 5);
+    ASSERT_EQ(sl2.length(), 4);
+
+    Slice<const int> sl3 = sl1.dropBack();
+    ASSERT_EQ(sl3.front(), 1);
+    ASSERT_EQ(sl3.back(), 4);
+    ASSERT_EQ(sl3.length(), 4);
 }
