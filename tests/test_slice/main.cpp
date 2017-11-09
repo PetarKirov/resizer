@@ -8,11 +8,13 @@ using namespace image::core;
 
 void testBasics();
 void testRangePrimitives();
+void testConst();
 
 int main()
 {
     testBasics();
     testRangePrimitives();
+    testConst();
 }
 
 struct Sum
@@ -74,4 +76,69 @@ void testRangePrimitives()
     ASSERT_EQ(sl3.front(), 1);
     ASSERT_EQ(sl3.back(), 4);
     ASSERT_EQ(sl3.length(), 4);
+}
+
+struct Pow2
+{
+    void operator()(int& x) { x *= x; }
+};
+
+void testConst()
+{
+    int arr[] = {1, 2, 3, 4, 5};
+    Slice<int> sl = slice(arr);
+
+    // Test implicit construction
+    Slice<const int> csl1 = sl;
+
+    // Test slicing
+    const Slice<const int> csl2 = csl1.slice(1, 3);
+
+    // test operator==
+    ASSERT_EQ(sl, csl1);
+    ASSERT_NEQ(sl, csl2);
+
+    // test getters: length(), bytes(), begin(), end(), operator[], empty()
+    ASSERT_EQ(csl2.length(), 2);
+    ASSERT_EQ(csl2.bytes(), 8);
+
+    const int* beg = csl2.begin();
+    const int* end = csl2.end();
+    ASSERT_EQ(beg, &arr[1]);
+    ASSERT_EQ(end, &arr[3]);
+
+    const int& x = csl2[0];
+    ASSERT_EQ(x, 2);
+
+    const Slice<const int> csl3 = csl1.slice(2, 2);
+    ASSERT_EQ(csl3.empty(), true);
+
+    // test drop*()
+    const Slice<const int> csl4 = csl1.drop().drop().dropBack().dropBack().dropBack();
+    ASSERT_EQ(csl3, csl4);
+
+    ASSERT_NEQ(csl3, csl1.drop().drop().drop().dropBack().dropBack());
+
+    Slice<int> sl5 = sl.slice(2, 4);
+    ASSERT_EQ(sl5, sl.drop().drop().dropBack());
+    ASSERT_EQ(sl5.length(), 2);
+
+    // test copying:
+    int dst[5];
+    Slice<int> res = slice(dst);
+
+    copy(csl1, res);
+    ASSERT_EQ(dst[0], 1);
+    ASSERT_EQ(dst[1], 2);
+    ASSERT_EQ(dst[2], 3);
+    ASSERT_EQ(dst[3], 4);
+    ASSERT_EQ(dst[4], 5);
+
+    std::for_each(sl.begin(), sl.end(), Pow2());
+    copy(slice(arr), slice(dst));
+    ASSERT_EQ(dst[0], 1);
+    ASSERT_EQ(dst[1], 4);
+    ASSERT_EQ(dst[2], 9);
+    ASSERT_EQ(dst[3], 16);
+    ASSERT_EQ(dst[4], 25);
 }

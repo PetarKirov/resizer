@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "image/config/assert.h"
+#include "image/core/type_traits.h"
 
 namespace image
 {
@@ -28,22 +29,53 @@ namespace core
         Slice(size_t size, T *ptr) : _length(size), _ptr(ptr) { }
 
     public:
+        /*
+         * The intention for the constructor below is to express the
+         * equivalent of the following D code:
+         *
+         * static if (!is(Unqual!T == T))
+         * this(Slice!(Unqual!T) o)
+         * {
+         *     _length = o._length;
+         *     _ptr = o._ptr;
+         * }
+         *
+         * ( https://run.dlang.io/is/JHrJSZ )
+         * Which should hopefully be more easy with C++ 2040 :)
+         */
+
+        template <typename U>
+        Slice(
+            Slice<U> o,
+            typename enable_if<
+                !is_same<T, typename remove_const<U>::type>::value,
+                int
+            >::type _ = 0
+        )
+            : _length(o.length()), _ptr(o.begin())
+        {
+            (void)_;
+        }
+
         template <size_t N>
         Slice(T (&arr)[N])
             : _length(N), _ptr(arr)
         { }
 
-        friend bool operator==(const Slice<T>& a, const Slice<T>& b)
+        template <class U>
+        friend bool operator==(const Slice<T>& a, const Slice<U>& b)
         {
-            return a._length == b._length && a._ptr == b._ptr;
+            return a.length() == b.length() && a.begin() == b.begin();
         }
 
-        friend bool operator!=(const Slice<T>& a, const Slice<T>& b)
+        template <class U>
+        friend bool operator!=(const Slice<T>& a, const Slice<U>& b)
         {
             return !(a == b);
         }
 
         size_t length() const { return _length; }
+        size_t bytes() const { return _length * sizeof(T); }
 
         T* begin() { return _ptr; }
         const T* begin() const { return _ptr; }

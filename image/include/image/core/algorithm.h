@@ -9,12 +9,18 @@ namespace image
 namespace core
 {
     template <class T>
-    void copy(const Slice<T>& src, Slice<T>& dst)
+    void copy(Slice<const T> src, Slice<T> dst)
     {
         ASSERT(src.length() == dst.length(),
                 "Copying one slice to another is allowed only when the lengths "
                 "of both slices are equal");
-        std::memcpy(dst.begin(), src.begin(), src.length() * sizeof(T));
+        std::memcpy(dst.begin(), src.begin(), dst.bytes());
+    }
+
+    template <class T>
+    void copy(Slice<T> src, Slice<T> dst)
+    {
+        copy(Slice<const T>(src), dst);
     }
 }
 }
