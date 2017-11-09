@@ -19,6 +19,12 @@ namespace core
 
     template<class T> struct remove_const          { typedef T type; };
     template<class T> struct remove_const<const T> { typedef T type; };
+
+    template <class From, class To>
+    struct copy_const { typedef To type; };
+
+    template <class From, class To>
+    struct copy_const<const From, To> { typedef const To type; };
 }
 }
 

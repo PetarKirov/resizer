@@ -144,14 +144,23 @@ namespace core
         Slice<const T> dropBack() const { return this->slice(0, _length - 1); }
 
         template <class U>
-        Slice<U> bitcast()
+        Slice< typename copy_const<T, U>::type > bitcast()
         {
+            typedef typename copy_const<T, U>::type CU;
+            enum {
+                same = is_same<
+                    typename remove_const<U>::type,
+                    typename remove_const<CU>::type
+                >::value
+            };
+            STATIC_ASSERT(same);
+
             ASSERT(sizeof(U) > 0, "Only POD types can be casted, sizeof(U) == 0");
             ASSERT(sizeof(T) > 0, "Only POD types can be casted, sizeof(T) == 0");
             ASSERT(sizeof(T) % sizeof(U) == 0,
                 "Array cast misalignmnet - sizeof(T) must be "
                 "divisible by sizeof(U)");
-            return Slice<U>(_length * (sizeof(T) / sizeof(U)), (U*)_ptr);
+            return Slice<CU>(_length * (sizeof(T) / sizeof(U)), (CU*)_ptr);
         }
 
     }; /* struct Slice<T> */

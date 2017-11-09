@@ -141,4 +141,8 @@ void testConst()
     ASSERT_EQ(dst[2], 9);
     ASSERT_EQ(dst[3], 16);
     ASSERT_EQ(dst[4], 25);
+
+    // test bitcast
+    Slice<const uint8_t> csl6 = csl1.bitcast<uint8_t>();
+    ASSERT_EQ(csl6[0] + csl6[1] + csl6[2] + csl6[3], 1);
 }
