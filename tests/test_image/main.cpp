@@ -1,4 +1,5 @@
 #include "image/core/image.h"
+#include "image/core/algorithm.h"
 #include "test_util/assert.h"
 
 using namespace image::core;
@@ -6,12 +7,14 @@ using namespace image::core;
 void testBasics1();
 void testBasics2();
 void testStride();
+void testCopy();
 
 int main()
 {
     testBasics1();
     testBasics2();
     testStride();
+    testCopy();
 }
 
 void testBasics1()
@@ -158,4 +161,37 @@ void testStride()
 
     ASSERT_EQ(img.back().front().r, 51);
     ASSERT_EQ(img.back().back().b, 63);
+}
+
+void testCopy()
+{
+    int srcArr[] =
+    {
+        4, 5, 6,
+        1, 2, 3
+    };
+
+    int dstArr[6] = { };
+
+    copy(
+        makeImage(slice(srcArr), 3, 2, true),
+        makeImage(slice(dstArr), 3, 2, true));
+
+    ASSERT_EQ(dstArr[0], 4);
+    ASSERT_EQ(dstArr[1], 5);
+    ASSERT_EQ(dstArr[2], 6);
+    ASSERT_EQ(dstArr[3], 1);
+    ASSERT_EQ(dstArr[4], 2);
+    ASSERT_EQ(dstArr[5], 3);
+
+    copy(
+        makeImage(slice(srcArr), 3, 2, true),
+        makeImage(slice(dstArr), 3, 2, false));
+
+    ASSERT_EQ(dstArr[0], 1);
+    ASSERT_EQ(dstArr[1], 2);
+    ASSERT_EQ(dstArr[2], 3);
+    ASSERT_EQ(dstArr[3], 4);
+    ASSERT_EQ(dstArr[4], 5);
+    ASSERT_EQ(dstArr[5], 6);
 }

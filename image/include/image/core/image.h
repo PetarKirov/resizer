@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include "image/config/assert.h"
+#include "image/core/type_traits.h"
 #include "image/core/slice.h"
 
 namespace image
@@ -16,6 +17,8 @@ namespace core
         size_t    const w;
         size_t    const h;
         ptrdiff_t const strideInBytes;
+
+        typedef typename copy_const<T, uint8_t>::type byte;
 
         Image(Slice<T> pixels,
                 size_t width, size_t height,
@@ -37,10 +40,23 @@ namespace core
             invariant();
         }
 
-    private:
-        size_t abs(ptrdiff_t x) { return x < 0? -x : x; }
+        template <typename U>
+        Image(
+            Image<U> o,
+            typename enable_if<
+                !is_same<T, typename remove_const<U>::type>::value,
+                int
+            >::type _ = 0
+        )
+            : data(o.data), w(o.w), h(o.h), strideInBytes(o.strideInBytes)
+        {
+            (void)_;
+        }
 
-        void invariant()
+    private:
+        static size_t abs(ptrdiff_t x) { return x < 0? -x : x; }
+
+        void invariant() const
         {
             ASSERT(data, "image data must be non-null");
             ASSERT(h > 0, "image height must be positive");
@@ -102,22 +118,28 @@ namespace core
         Slice<const T> back() const
         { invariant(); return slice(w, scanLineImpl(h - 1)); }
 
-        Slice<uint8_t> rawMemory()
+        Slice<byte> rawMemory()
         {
             invariant();
-            return Slice<uint8_t>(
+            return Slice<byte>(
                 abs(strideInBytes) * h,
-                (uint8_t*)(strideInBytes > 0? front() : back()).begin());
+                (byte*)(strideInBytes > 0? front() : back()).begin());
         }
 
-        Slice<const uint8_t> rawMemory() const
+        Slice<const byte> rawMemory() const
         {
             invariant();
-            return Slice<uint8_t>(
+            return Slice<const byte>(
                 abs(strideInBytes) * h,
-                (uint8_t*)(strideInBytes > 0? front() : back()).begin());
+                (const byte*)(strideInBytes > 0? front() : back()).begin());
         }
     };
+
+    template<class T>
+    Image<T> makeImage(Slice<T> slice, size_t width, size_t height, bool flipRows)
+    {
+        return Image<T>(slice, width, height, flipRows);
+    }
 
 } /* namespace core */
 } /* namespace image */
