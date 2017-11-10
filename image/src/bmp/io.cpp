@@ -1,4 +1,5 @@
 #include "image/bmp/io.h"
+#include "image/core/algorithm.h"
 
 #include <cstring>
 
@@ -7,48 +8,61 @@ namespace image
 namespace bmp
 {
 
-bool loadHeader(core::Slice<const uint8_t> data, BmpV5File* result)
+core::Slice<const uint8_t> loadBitmapImage(
+    core::Slice<const uint8_t> bytes, BmpV5File& resultInfo)
 {
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #   error "Image loading on big endian targets is not yet implemented"
 #endif
 
-    const int genericHeaderSize = sizeof(BmpGenericHeader);
+    using namespace core;
 
-    if (data.length() < sizeof(genericHeaderSize))
-        return false;
+    Slice<const uint8_t> error = Slice<const uint8_t>::init();
 
-    const BmpGenericHeader* base = (const BmpGenericHeader*)&data[0];
+    if (bytes.length() < sizeof(BmpGenericHeader))
+        return error;
 
-    if (base->signature != 0x4D42)
-        return false;
+    const BmpGenericHeader& header = *(const BmpGenericHeader*)&bytes[0];
 
-    if (base->fileSize != data.length())
-        return false;
+    if (header.signature != 0x4D42)
+        return error;
 
-    if (base->version != DIBVersion::BITMAPCOREHEADER &&
-        base->version != DIBVersion::BITMAPINFOHEADER &&
-        base->version != DIBVersion::BITMAPV2INFOHEADER &&
-        base->version != DIBVersion::BITMAPV3INFOHEADER &&
-        base->version != DIBVersion::BITMAPV4INFOHEADER &&
-        base->version != DIBVersion::BITMAPV5INFOHEADER)
-        return false;
+    if (header.fileSize != bytes.length())
+        return error;
 
-    std::memcpy((void*)result, base, genericHeaderSize);
+    if (header.version != DIBVersion::BITMAPCOREHEADER &&
+        header.version != DIBVersion::BITMAPINFOHEADER &&
+        header.version != DIBVersion::BITMAPV2INFOHEADER &&
+        header.version != DIBVersion::BITMAPV3INFOHEADER &&
+        header.version != DIBVersion::BITMAPV4INFOHEADER &&
+        header.version != DIBVersion::BITMAPV5INFOHEADER)
+        return error;
 
-    if (base->version == DIBVersion::BITMAPCOREHEADER)
+    const int fileHeader = sizeof(BmpFileHeader);
+    const uint32_t dibHeader = (uint32_t)header.version;
+
+    Slice<uint8_t> resultAsBytes = sliceIntoBytes(resultInfo);
+
+    copy(
+        bytes.slice(0, fileHeader),
+        resultAsBytes.slice(0, fileHeader));
+
+    if (header.version == DIBVersion::BITMAPCOREHEADER)
     {
-
-        return true;
-    }
-    else if (base->version == DIBVersion::BITMAPINFOHEADER)
-    {
-        const BmpV1File* base = (const BmpV1File*)&data[0];
-        std::memcpy((void*)result, base, sizeof(BmpV1File));
-        return true;
+        const BmpV0File& file = *(const BmpV0File*)&bytes[0];
+        resultInfo.width = file.width;
+        resultInfo.height = file.height;
+        resultInfo.colorPlanesCount = file.colorPlanesCount;
+        resultInfo.bpp = file.bpp;
     }
     else
-        return false;
+    {
+        copy(
+            bytes.skipTake(fileHeader, dibHeader),
+            resultAsBytes.skipTake(fileHeader, dibHeader));
+    }
+
+    return bytes.slice(header.offsetToPixelArray, bytes.length());
 }
 
 } /* namespace bmp */

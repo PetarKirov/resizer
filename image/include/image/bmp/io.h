@@ -32,7 +32,8 @@ namespace bmp
     #pragma pack(1)
     struct BmpV5File : BmpFileHeader, DIBHeaderV5 { };
 
-    bool loadHeader(core::Slice<const uint8_t> data, BmpV5File* header);
+    core::Slice<const uint8_t> loadBitmapImage(
+        core::Slice<const uint8_t> bytes, BmpV5File& resultInfo);
 
 
 } /* namespace bmp */
