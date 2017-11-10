@@ -18,10 +18,11 @@
         {                                                   \
             Name() {}                                       \
             explicit Name(Type v) : _v(v) {}                \
+            typedef Type BaseType;                          \
         private:                                            \
-            Type _v;                                        \
+            BaseType _v;                                    \
         public:                                             \
-            enum Enum                                  \
+            enum Enum                                       \
             {
 
 #   define ENUM_CLASS_END(Name) \
@@ -44,6 +45,7 @@
             friend bool operator >=(Name a, Name b) { return a._v >= b._v; } \
             friend bool operator >=(Name a, Enum b) { return a._v >= b;    } \
             friend bool operator >=(Enum a, Name b) { return a    >= b._v; } \
+            operator BaseType () const { return _v; } \
         };
 #else
 #   define ENUM_CLASS_BEGIN(Name, Type) enum class Name : Type {
