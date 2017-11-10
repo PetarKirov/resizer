@@ -17,15 +17,16 @@ namespace core
 
 #if __cplusplus >= 201103L
     public:
-        Slice() = delete;
         Slice(const Slice& other) = default;
         Slice& operator=(const Slice& other) = default;
-#else
-    private:
-        Slice() { }
 #endif
 
+    private:
+        Slice() : _length(0), _ptr(NULL) { }
+
     public:
+        static Slice init() { return Slice<T>(); }
+
         Slice(size_t size, T *ptr) : _length(size), _ptr(ptr) { }
 
     public:
@@ -163,6 +164,19 @@ namespace core
             return Slice<CU>(_length * (sizeof(T) / sizeof(U)), (CU*)_ptr);
         }
 
+        Slice<T> skipTake(size_t skip, size_t take)
+        {
+            ASSERT(skip + take <= _length,
+                "`skip + take` exceeds the current slice length()");
+            return Slice<T>(take, _ptr + skip);
+        }
+
+        Slice<const T> skipTake(size_t skip, size_t take) const
+        {
+            ASSERT(skip + take <= _length,
+                "`skip + take` exceeds the current slice length()");
+            return Slice<T>(take, _ptr + skip);
+        }
     }; /* struct Slice<T> */
 
     template <class T, size_t N>
@@ -175,6 +189,15 @@ namespace core
     Slice<T> slice(size_t length, T* ptr)
     {
         return Slice<T>(length, ptr);
+    }
+
+    template <class T>
+    Slice<typename copy_const<T, uint8_t>::type>
+        sliceIntoBytes(T& obj)
+    {
+        return Slice<typename copy_const<T, uint8_t>::type>(
+            sizeof(T),
+            (typename copy_const<T, uint8_t>::type*)&obj);
     }
 } /* namespace core */
 } /* namespace image */

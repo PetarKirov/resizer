@@ -9,12 +9,14 @@ using namespace image::core;
 void testBasics();
 void testRangePrimitives();
 void testConst();
+void testObjSlice();
 
 int main()
 {
     testBasics();
     testRangePrimitives();
     testConst();
+    testObjSlice();
 }
 
 struct Sum
@@ -26,6 +28,11 @@ struct Sum
 
 void testBasics()
 {
+    Slice<short> x = Slice<short>::init();
+    ASSERT_EQ(x.length(), 0);
+    ASSERT_EQ(!!x.begin(), false);
+    ASSERT_EQ(x.empty(), true);
+
     int arr[] = {1, 2, 3, 4, 5};
 
     Slice<int> sl1(arr);
@@ -76,6 +83,16 @@ void testRangePrimitives()
     ASSERT_EQ(sl3.front(), 1);
     ASSERT_EQ(sl3.back(), 4);
     ASSERT_EQ(sl3.length(), 4);
+
+    ASSERT_EQ(sl1.skipTake(0, 5), sl1);
+    ASSERT_EQ(sl1.skipTake(1, 4), sl2);
+    ASSERT_EQ(sl1.skipTake(0, 4), sl3);
+
+    int elementsToSkip = 2;
+    int elementsNeeded = 1;
+    Slice<const int> res1 = sl1.skipTake(elementsToSkip, elementsNeeded);
+    Slice<const int> res2 = sl1.slice(elementsToSkip, elementsToSkip + elementsNeeded);
+    ASSERT_EQ(res1, res2);
 }
 
 struct Pow2
@@ -145,4 +162,41 @@ void testConst()
     // test bitcast
     Slice<const uint8_t> csl6 = csl1.bitcast<uint8_t>();
     ASSERT_EQ(csl6[0] + csl6[1] + csl6[2] + csl6[3], 1);
+}
+
+struct MyFancyObj
+{
+    uint8_t field1;
+    uint8_t field2;
+    uint8_t field3;
+    uint8_t field4;
+
+    MyFancyObj(uint8_t f1, uint8_t f2, uint8_t f3, uint8_t f4)
+        : field1(f1), field2(f2), field3(f3), field4(f4)
+    { }
+};
+
+void testObjSlice()
+{
+    MyFancyObj obj(7, 21, 42, 84);
+
+    STATIC_ASSERT(sizeof(MyFancyObj) == 4);
+
+    Slice<uint8_t> sl1 = sliceIntoBytes(obj);
+    ASSERT_EQ(sl1.length(), 4);
+    ASSERT_EQ(sl1.begin(), (uint8_t*)&obj);
+    ASSERT_EQ(sl1[0], 7);
+    ASSERT_EQ(sl1[1], 21);
+    ASSERT_EQ(sl1[2], 42);
+    ASSERT_EQ(sl1[3], 84);
+
+    sl1[0] = 255;
+    sl1[1] = 254;
+    sl1[2] = 253;
+    sl1[3] = 252;
+
+    ASSERT_EQ(obj.field1, 255);
+    ASSERT_EQ(obj.field2, 254);
+    ASSERT_EQ(obj.field3, 253);
+    ASSERT_EQ(obj.field4, 252);
 }
