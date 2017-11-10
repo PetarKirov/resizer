@@ -30,7 +30,7 @@ namespace core
             invariant();
         }
 
-        Image(Slice<uint8_t> pixels,
+        Image(Slice<typename copy_const<T, uint8_t>::type> pixels,
                 size_t width, size_t height,
                 ptrdiff_t stride)
             : data((T*)(stride > 0 ? pixels.begin() : pixels.end() + stride)),
