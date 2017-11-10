@@ -3,16 +3,16 @@
 
 using namespace image::bmp;
 
-void verify_struct_def_sizes();
-void verify_header_of_simple_bmp_image();
+void verifyStructSizeCorrectness();
+void testParsingOfSimplyImage();
 
 int main()
 {
-    verify_struct_def_sizes();
-    verify_header_of_simple_bmp_image();
+    verifyStructSizeCorrectness();
+    testParsingOfSimplyImage();
 }
 
-void verify_struct_def_sizes()
+void verifyStructSizeCorrectness()
 {
     ASSERT_EQ(sizeof(BmpFileHeader), 14);
     ASSERT_EQ(sizeof(DIBHeaderV0), (size_t)DIBVersion::BITMAPCOREHEADER);
@@ -56,7 +56,7 @@ static const uint8_t bmp1[] =
     0x00, 0x00,                 // 0 0                  Padding for 4 byte alignment (could be a value other than zero)
 };
 
-void verify_header_of_simple_bmp_image()
+void testParsingOfSimplyImage()
 {
     using namespace image::core;
 
