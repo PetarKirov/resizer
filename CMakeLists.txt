@@ -6,12 +6,6 @@ set(CMAKE_PROJECT_DESCRIPTION
     "A C++ library and a node module for resizing .bmp image files"
 )
 
-if (MSVC)
-    add_compile_options(/W4)
-else (MSVC)
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif (MSVC)
-
 option(USE_CPP11 "Use C++ 11, instead of C++98" ON)
 
 if (USE_CPP11)
