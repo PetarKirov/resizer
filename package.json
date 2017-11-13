@@ -1,0 +1,24 @@
+{
+  "name": "resizer",
+  "version": "0.0.1",
+  "description": "A C++ addon for resizing BMP images",
+  "dependencies": {
+    "bindings": "*",
+    "cmake-js": "^3.5.0",
+    "nan": "^2.7.0"
+  },
+  "main" : "resizer-node/index.js",
+  "scripts": {
+    "install": "cmake-js compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZombineDev/resizer.git"
+  },
+  "author": "ZombineDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZombineDev/resizer/issues"
+  },
+  "homepage": "https://github.com/ZombineDev/resizer#readme"
+}
