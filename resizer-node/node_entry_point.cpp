@@ -15,5 +15,5 @@ NODE_MODULE(resizer, initModule)
 
 void resize(const Nan::FunctionCallbackInfo<v8::Value>& info)
 {
-    info.GetReturnValue().Set(New("world").ToLocalChecked());
+    info.GetReturnValue().Set(New("Hello, world!").ToLocalChecked());
 }
